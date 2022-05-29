@@ -41,58 +41,61 @@ void Print(Matrix *m, int str, int stlb) {
         printf("%d  %.1lf | ", temp->cell1, temp->cell2);
         temp = (Item *) temp->next;
     }
+    printf("\n");
+    for (int j = 1; j <= str; j++) {
+        for (int p = 1; p <= stlb; p++) {
+            temp = (Item *) m->head;
+            int printzero = 1;
+            for (int i = 0; i < m->size; i++) {
+                if (temp->cell1 == 0)
+                    str1 = (int) temp->cell2;
+                if ((temp->cell1 == p) && (str1 == j)) {
+                    printf("%10.2lf", temp->cell2);
+                    printzero = 0;
+                    break;
+                }
+                temp = (Item *) temp->next;
+            }
+            if (printzero == 1)
+                printf("%10.2lf", 0);
+            if (p == stlb)
+                printf("\n");
+        }
+    }
+}
 
+void MaxN(Matrix *m, int str) {
     int* z = calloc(str+1, sizeof(int));
-    temp = (Item *) m->head;
+    Item* temp = (Item *) m->head;
+    int str1 = 0;
     for (int i = 1; i < m->size; i++) {
         if (temp->cell1 == 0)
             str1 = (int)temp->cell2;
-        else
-            if (temp->cell2 != 0)
-                z[str1]++;
+        else if (temp->cell2 != 0)
+            z[str1]++;
         temp = (Item *) temp->next;
     }
-
     double sum = 0;
     int maxstr = 0;
     for (int i = 1; i <= str; i++) {
         if (z[i] > maxstr)
             maxstr = z[i];
     }
-
-    printf("\n");
-    double matrix[str+1][stlb+1];
-    for (int i = 1; i <= str; i++) {
-        for (int j = 1; j <= stlb; j++) {
-            matrix[i][j] = 0;
-        }
-    }
-    temp = (Item *) m->head;
-    for (int i = 0; i < m->size; i++) {
-        if (temp->cell1 == 0)
-            str1 = (int)temp->cell2;
-        else
-            matrix[str1][temp->cell1] = temp->cell2;
-        temp = (Item *) temp->next;
-    }
-    for (int i = 1; i <= str; i++) {
-        for (int j = 1; j <= stlb; j++) {
-            printf("%10.2lf", matrix[i][j]);
-        }
-        printf("\n");
-    }
-
     for (int i = 1; i <= str; i++) {
         if (z[i] == maxstr) {
-            int k = i;
-            for (int j = 1; j <= stlb; j++) {
-                sum = sum + matrix[k][j];
+            temp = (Item *) m->head;
+            while (!(temp->cell1 == 0 && temp->cell2 == i)) {
+                temp = (Item *) temp->next;
+            }
+            temp = (Item *) temp->next;
+            while (temp->cell1 != 0) {
+                sum = sum + temp->cell2;
+                temp = (Item *) temp->next;
             }
             printf("Number: %d, sum: %.2lf\n", i, sum);
             sum = 0;
         }
     }
-
 }
 
 int main() {
@@ -128,6 +131,7 @@ int main() {
     strNum--;
     stlbNum--;
     Print(m, strNum, stlbNum);
+    MaxN(m, strNum);
     fclose(in);
     return 0;
 }
